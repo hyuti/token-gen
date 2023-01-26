@@ -1,11 +1,10 @@
-package generator_test
+package generator
 
 import (
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/hyuti/pwdTokenGenerator/generator"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,7 +20,7 @@ func TestHashData(t *testing.T) {
 			setUp: func(_ *testing.T) {},
 			expect: func(t *testing.T) {
 				value := "foo"
-				res := generator.HashData(value)
+				res := hashData(value)
 				require.NotEmpty(t, res)
 			},
 		},
@@ -47,7 +46,7 @@ func TestHashDataWithSecretKey(t *testing.T) {
 			expect: func(t *testing.T) {
 				value := "foo"
 				secretKey := "bar"
-				res := generator.HashDataWithSecretKey(value, []byte(secretKey))
+				res := hashDataWithSecretKey(value, []byte(secretKey))
 				require.NotEmpty(t, res)
 			},
 		},
@@ -75,7 +74,7 @@ func TestSaltedHmac(t *testing.T) {
 				value := "foo"
 				secretKey := "bar"
 				salt := "foobar"
-				res := generator.SaltedHmac(salt, value, secretKey)
+				res := saltedHmac(salt, value, secretKey)
 				require.NotEmpty(t, res)
 			},
 		},
@@ -103,7 +102,7 @@ func TestSaltedHmacHex(t *testing.T) {
 				value := "foo"
 				secretKey := "bar"
 				salt := "foobar"
-				res := generator.SaltedHmacHex(salt, value, secretKey)
+				res := saltedHmacHex(salt, value, secretKey)
 				require.NotEmpty(t, res)
 			},
 		},
@@ -129,7 +128,7 @@ func TestGetTimestamp(t *testing.T) {
 			setUp: func(_ *testing.T) {},
 			expect: func(t *testing.T) {
 				n := time.Now()
-				res := generator.GetTimestamp(n, nil)
+				res := getTimestamp(n, nil)
 				require.NotEmpty(t, res)
 			},
 		},
@@ -138,7 +137,7 @@ func TestGetTimestamp(t *testing.T) {
 			setUp: func(_ *testing.T) {},
 			expect: func(t *testing.T) {
 				n := time.Now()
-				res := generator.GetTimestamp(n, time.Local)
+				res := getTimestamp(n, time.Local)
 				require.NotEmpty(t, res)
 			},
 		},
@@ -162,7 +161,7 @@ func TestGetNow(t *testing.T) {
 			name:  "success",
 			setUp: func(_ *testing.T) {},
 			expect: func(t *testing.T) {
-				res := generator.GetNow()
+				res := getNow()
 				require.NotEmpty(t, res)
 			},
 		},
@@ -190,7 +189,7 @@ func TestMakeTokenWithTs(t *testing.T) {
 				value := "foo"
 				secretKey := "bar"
 				salt := "foobar"
-				res := generator.MakeTokenWithTs(salt, value, secretKey, generator.GetTimestamp(generator.GetNow(), nil))
+				res := makeTokenWithTs(salt, value, secretKey, getTimestamp(getNow(), nil))
 				require.NotEmpty(t, res)
 
 				l := strings.Split(res, "-")
@@ -221,7 +220,7 @@ func TestMakeTokenWithSalt(t *testing.T) {
 				value := "foo"
 				secretKey := "bar"
 				salt := "foobar"
-				res := generator.MakeTokenWithSalt(salt, value, secretKey)
+				res := MakeTokenWithSalt(salt, value, secretKey)
 				require.NotEmpty(t, res)
 
 				l := strings.Split(res, "-")
@@ -251,7 +250,7 @@ func TestMakeToken(t *testing.T) {
 			expect: func(t *testing.T) {
 				value := "foo"
 				secretKey := "bar"
-				res := generator.MakeToken(value, secretKey)
+				res := MakeToken(value, secretKey)
 				require.NotEmpty(t, res)
 
 				l := strings.Split(res, "-")
@@ -284,7 +283,7 @@ func TestValidateTokenWithKeySaltAndGetNow(t *testing.T) {
 				salt := "foobar"
 				timeout, _ := time.ParseDuration("60s")
 				tk := "foobar"
-				res := generator.ValidateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, timeout, generator.GetNow)
+				res := validateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, timeout, getNow)
 				require.Error(t, res)
 			},
 		},
@@ -297,7 +296,7 @@ func TestValidateTokenWithKeySaltAndGetNow(t *testing.T) {
 				salt := "foobar"
 				timeout, _ := time.ParseDuration("60s")
 				tk := "foobar-foo"
-				res := generator.ValidateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, timeout, generator.GetNow)
+				res := validateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, timeout, getNow)
 				require.Errorf(t, res, "encoding/hex")
 			},
 		},
@@ -310,10 +309,10 @@ func TestValidateTokenWithKeySaltAndGetNow(t *testing.T) {
 				salt := "foobar"
 				timeout, _ := time.ParseDuration("60s")
 				now := time.Now()
-				tk := generator.MakeTokenWithSaltAndGetNow(salt, value, secretKey, func() time.Time {
+				tk := makeTokenWithSaltAndGetNow(salt, value, secretKey, func() time.Time {
 					return now
 				})
-				res := generator.ValidateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, timeout, func() time.Time {
+				res := validateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, timeout, func() time.Time {
 					return now.Add(timeout).Add(time.Hour)
 				})
 				require.Errorf(t, res, "timeout exceeded")
@@ -328,10 +327,10 @@ func TestValidateTokenWithKeySaltAndGetNow(t *testing.T) {
 				salt := "foobar"
 				timeout, _ := time.ParseDuration("60s")
 				n := time.Now()
-				tk := generator.MakeTokenWithSaltAndGetNow(salt, value, secretKey, func() time.Time {
+				tk := makeTokenWithSaltAndGetNow(salt, value, secretKey, func() time.Time {
 					return n
 				})
-				res := generator.ValidateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, timeout, func() time.Time {
+				res := validateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, timeout, func() time.Time {
 					return n
 				})
 				require.Nil(t, res)

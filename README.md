@@ -1,5 +1,5 @@
-# pwdTokenGenerator
-pwdTokenGenerator is a token generator used for use cases such as reset password, otp, etc. Basically, you will need this package in use cases where data shared between parties must be ensure its integrity and authenticity. This package is inspired by [django-contrib-auth-token](https://github.com/django/django/blob/main/django/contrib/auth/tokens.py) so that each token generated will have its timeout.
+# pwd-token-generator
+pwd-token-generator is a token generator used for use cases such as reset password, otp, etc. Basically, you will need this package in use cases where data shared between parties must be ensure its integrity and authenticity. This package is inspired by [django-contrib-auth-token](https://github.com/django/django/blob/main/django/contrib/auth/tokens.py) so that each token generated will have its timeout.
 # Installation
 Use go get
 ```sh 

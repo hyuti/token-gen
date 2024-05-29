@@ -1,4 +1,4 @@
-package generator
+package tokengen
 
 import (
 	"github.com/martinlindhe/base36"

@@ -1,4 +1,4 @@
-package generator
+package tokengen
 
 import (
 	"strings"
@@ -33,7 +33,7 @@ func TestHashData(t *testing.T) {
 		})
 	}
 }
-func TestHashDataWithSecretKey(t *testing.T) {
+func TestHashAndEncryptWithSecretKey(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name   string
@@ -46,7 +46,7 @@ func TestHashDataWithSecretKey(t *testing.T) {
 			expect: func(t *testing.T) {
 				value := "foo"
 				secretKey := "bar"
-				res := hashDataWithSecretKey(value, []byte(secretKey))
+				res := hashAndEncryptWithSecretKey(value, []byte(secretKey))
 				require.NotEmpty(t, res)
 			},
 		},

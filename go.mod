@@ -1,4 +1,4 @@
-module github.com/hyuti/pwdTokenGenerator
+module github.com/hyuti/tokengen
 
 go 1.19
 

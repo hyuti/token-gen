@@ -1,4 +1,4 @@
-package generator
+package tokengen
 
 import (
 	"crypto/hmac"
@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	KeySalt = "github.com/hyuti/pwdTokenGenerator"
+	KeySalt = "github.com/hyuti/tokengen"
 )
 
 func hashData(value string) []byte {
@@ -19,14 +19,14 @@ func hashData(value string) []byte {
 	h.Write([]byte(value))
 	return h.Sum(nil)
 }
-func hashDataWithSecretKey(value string, secretKey []byte) []byte {
+func hashAndEncryptWithSecretKey(value string, secretKey []byte) []byte {
 	h := hmac.New(sha256.New, secretKey)
 	h.Write([]byte(value))
 	return h.Sum(nil)
 }
 func saltedHmac(keySalt, value, secretKey string) []byte {
 	key := hashData(fmt.Sprintf("%s%s", keySalt, secretKey))
-	return hashDataWithSecretKey(value, key)
+	return hashAndEncryptWithSecretKey(value, key)
 }
 
 func saltedHmacHex(keySalt, value, secretKey string) string {

@@ -1,13 +1,13 @@
-# Forget password token generator
-Forget password token generator is a token generator used for use cases such as reset password, otp, etc. Basically, you will need this package in use cases where data shared between parties must be ensure its integrity and authenticity. This package is inspired by [django-contrib-auth-token](https://github.com/django/django/blob/main/django/contrib/auth/tokens.py) so that each token generated will have its timeout.
+# Token gen
+Token generator is a token generator used for use cases such as reset password, otp, etc. Basically, you will need this package in use cases where data shared between parties must be ensure its integrity and authenticity. This package is inspired by [django-contrib-auth-token](https://github.com/django/django/blob/main/django/contrib/auth/tokens.py) so that each token generated will have its timeout.
 # Installation
 Use go get
 ```sh 
-go get -u github.com/hyuti/pwdTokenGenerator/generator
+go get -u github.com/hyuti/tokengen
 ``` 
 Then import the package into your own code
 ```go
-import "github.com/hyuti/pwdTokenGenerator/generator"
+import "github.com/hyuti/tokengen"
 ```
 # Usage
 ## Make a token 

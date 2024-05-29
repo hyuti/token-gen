@@ -1,5 +1,10 @@
-# Token gen
-Token generator is a token generator used for use cases such as reset password, otp, etc. Basically, you will need this package in use cases where data shared between parties must be ensure its integrity and authenticity. This package is inspired by [django-contrib-auth-token](https://github.com/django/django/blob/main/django/contrib/auth/tokens.py) so that each token generated will have its timeout.
+# TokenGen
+TokenGen is intended to retain data integrity and authenticity shared between parties. This package is inspired by [django-contrib-auth-token](https://github.com/django/django/blob/main/django/contrib/auth/tokens.py) so that each token generated will have its timeout.
+Used techniques are symmetric and hashing so that you must have a secret key shared among partners to succeed on using this module.
+# Use cases
+- Digital signatures
+- OTP (one time password)
+- Forget password token with timeout
 # Installation
 Use go get
 ```sh 
@@ -17,14 +22,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/hyuti/pwdTokenGenerator/generator"
+	"github.com/hyuti/tokengen"
 )
 
 func main() {
 	data := "data"
 	// this key should be stores in enviroment variables or something similar and only accessible by you
 	secretKey := "a random key"
-	token := generator.MakeToken(data, secretKey)
+	token := tokengen.MakeToken(data, secretKey)
 	fmt.Println(token)
 }
 
@@ -37,24 +42,23 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hyuti/pwdTokenGenerator/generator"
+	"github.com/hyuti/tokengen"
 )
 
 func main() {
 	data := "data"
 	secretKey := "a random key"
-	token := generator.MakeToken(data, secretKey)
+	token := tokengen.MakeToken(data, secretKey)
 	timeout, err := time.ParseDuration("60s")
 	if err != nil {
 		fmt.Println(err)
-	} else {
-		err = generator.ValidateToken(data, secretKey, token, timeout)
-		if err != nil {
-			fmt.Printf("invalid token: %s\n", err)
-		} else {
-			fmt.Println("token valid")
-		}
+		return
 	}
+	if err := tokengen.ValidateToken(data, secretKey, token, timeout);err != nil {
+		fmt.Printf("invalid token: %s\n", err)
+		return
+	}
+	fmt.Println("token valid")
 }
 
 ```
@@ -65,14 +69,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/hyuti/pwdTokenGenerator/generator"
+	"github.com/hyuti/tokengen"
 )
 
 func main() {
 	data := "data"
 	secretKey := "a random key"
 	salt := "your own key salt"
-	token := generator.MakeTokenWithSalt(salt, data, secretKey)
+	token := tokengen.MakeTokenWithSalt(salt, data, secretKey)
 	fmt.Println(token)
 }
 ```
@@ -84,25 +88,24 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hyuti/pwdTokenGenerator/generator"
+	"github.com/hyuti/tokengen"
 )
 
 func main() {
 	data := "data"
 	secretKey := "a random key"
 	salt := "your own key salt"
-	token := generator.MakeTokenWithSalt(salt, data, secretKey)
+	token := tokengen.MakeTokenWithSalt(salt, data, secretKey)
 	timeout, err := time.ParseDuration("60s")
 	if err != nil {
 		fmt.Println(err)
-	} else {
-		err = generator.ValidateTokenWithKeySalt(salt, data, secretKey, token, timeout)
-		if err != nil {
-			fmt.Printf("invalid token: %s\n", err)
-		} else {
-			fmt.Println("token valid")
-		}
+		return
 	}
+	if err := tokengen.ValidateTokenWithKeySalt(salt, data, secretKey, token, timeout);err != nil {
+		fmt.Printf("invalid token: %s\n", err)
+		return
+	}
+	fmt.Println("token valid")
 }
 
 ```

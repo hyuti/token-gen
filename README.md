@@ -1,5 +1,5 @@
-# TokenGen
-TokenGen is intended to retain data integrity and authenticity shared between parties. This package is inspired by [django-contrib-auth-token](https://github.com/django/django/blob/main/django/contrib/auth/tokens.py) so that each token generated will have its timeout.
+# Token Generator
+TokenGen is intended to assure data integrity and authenticity shared between parties. This package is inspired by [django-contrib-auth-token](https://github.com/django/django/blob/main/django/contrib/auth/tokens.py) so that each token generated will have its timeout.
 Used techniques are symmetric and hashing so that you must have a secret key shared among partners to succeed on using this module.
 # Use cases
 - Digital signatures

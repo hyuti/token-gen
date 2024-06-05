@@ -175,7 +175,7 @@ func TestGetNow(t *testing.T) {
 	}
 }
 
-func TestMakeTokenWithTs(t *testing.T) {
+func Test_makeTokenWithTs(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name   string
@@ -344,4 +344,25 @@ func TestValidateTokenWithKeySaltAndGetNow(t *testing.T) {
 			tt.expect(t)
 		})
 	}
+}
+
+func Fuzz_makeTokenWithTs(f *testing.F) {
+	testCases := []string{
+		"foo", " ", "123!",
+	}
+	for _, tc := range testCases {
+		f.Add(tc)
+	}
+	salt := "foobar"
+	secretKey := "bar"
+	f.Fuzz(func(t *testing.T, value string) {
+		nw := getNow()
+		tk := makeTokenWithTs(salt, value, secretKey, getTimestamp(nw, nil))
+		res := validateTokenWithKeySaltAndGetNow(salt, value, secretKey, tk, time.Since(nw)+time.Hour, func() time.Time {
+			return nw
+		})
+		if res != nil {
+			t.Errorf("err: %q, salt: %q, value: %q, secretkey: %q", res, salt, value, secretKey)
+		}
+	})
 }
